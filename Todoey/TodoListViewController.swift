@@ -10,7 +10,7 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
-    let itemArray = ["Juanito","Pedro","Artemizo"];
+    var itemArray = ["Juanito","Pedro","Artemizo"];
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -46,6 +46,31 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true);//esta es para que no se quede marcada la linea
     
     }
-
+//este boton nos permite 
+    @IBAction func addButtonItem(_ sender: UIBarButtonItem) {
+        
+        var textField = UITextField();
+        
+        let alert = UIAlertController(title: "Añade un Nuevo Elemento", message: "", preferredStyle: .alert );
+        
+        let action = UIAlertAction(title: "Añadir", style: .default) { (UIAlertAction) in
+            
+            if textField.text == "" {
+                self.itemArray.append("Elemento Vacio");
+            }else {
+                self.itemArray.append(textField.text!);
+            }
+            self.tableView.reloadData();
+            
+        }
+        
+        
+        alert.addTextField { (alertTextField) in
+            textField = alertTextField;
+        }
+        alert.addAction(action);
+        
+        present(alert, animated: true,completion: nil);
+    }
 }
 
