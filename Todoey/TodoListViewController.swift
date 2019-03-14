@@ -10,10 +10,17 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
 
+    
+      //inicilizamos el USER Default
+    var defaults = UserDefaults.standard;
     var itemArray = ["Juanito","Pedro","Artemizo"];
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        //recuperamos la data y la seteamos en el array
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items;
+        }
     }
 
     //este es para saber el numero de filas que se van a mostrar
@@ -46,7 +53,7 @@ class TodoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true);//esta es para que no se quede marcada la linea
     
     }
-//este boton nos permite 
+//este boton nos permite
     @IBAction func addButtonItem(_ sender: UIBarButtonItem) {
         
         var textField = UITextField();
@@ -61,6 +68,8 @@ class TodoListViewController: UITableViewController {
                 self.itemArray.append(textField.text!);
             }
             self.tableView.reloadData();
+            //guardamos la data de manera local en nuestro telefono
+            self.defaults.set(self.itemArray, forKey: "TodoListArray");
             
         }
         
