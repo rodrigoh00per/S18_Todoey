@@ -11,14 +11,29 @@ import UIKit
 class TodoListViewController: UITableViewController {
 
     
-      //inicilizamos el USER Default
+      //inicilizamos el USER Default para poder persistir data local
     var defaults = UserDefaults.standard;
-    var itemArray = ["Juanito","Pedro","Artemizo"];
+    var itemArray = [Item]();
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let newItem  = Item();
+        newItem.title = "Juanito";
+        self.itemArray.append(newItem);
+        
+        
+        let newItem2 = Item();
+        newItem2.title = "Artemizo";
+        self.itemArray.append(newItem2);
+        
+        let newItem3 = Item();
+        newItem3.title = "Sami";
+        self.itemArray.append(newItem3);
+        
         // Do any additional setup after loading the view, typically from a nib.
+        
         //recuperamos la data y la seteamos en el array
-        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
             itemArray = items;
         }
     }
@@ -31,13 +46,19 @@ class TodoListViewController: UITableViewController {
     
     //esta es para el origen de los datos
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let message = self.itemArray[indexPath.row];
         
+        let item = self.itemArray[indexPath.row];
+        let message = item.title;
         
-    
         let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell",for:indexPath);
         
         cell.textLabel?.text = message;
+        
+    //acuerdate que aqui este metodo es para lo que mostrara tableView
+        
+        //verificamos que bandera esta en el item
+        cell.accessoryType = item.done == true ? .checkmark : .none;
+  
         
         return cell;
     }
@@ -45,13 +66,14 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath.row);
         
-        if  tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark{ //verificamos si ya tiene puesta una marca esa celda
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none;
-        }else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark;
-        }
+        
+        self.itemArray[indexPath.row].done = !self.itemArray[indexPath.row].done;
+       
+           tableView.reloadData();
+     
         tableView.deselectRow(at: indexPath, animated: true);//esta es para que no se quede marcada la linea
     
+        
     }
 //este boton nos permite
     @IBAction func addButtonItem(_ sender: UIBarButtonItem) {
@@ -63,9 +85,16 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Añadir", style: .default) { (UIAlertAction) in
             
             if textField.text == "" {
-                self.itemArray.append("Elemento Vacio");
+                
+                let newItem = Item();
+                newItem.title = "Elemento Vacio";
+                self.itemArray.append(newItem);
+                
             }else {
-                self.itemArray.append(textField.text!);
+                let newItem = Item();
+                newItem.title = textField.text!;
+                self.itemArray.append(newItem);
+                
             }
             self.tableView.reloadData();
             //guardamos la data de manera local en nuestro telefono
@@ -73,7 +102,7 @@ class TodoListViewController: UITableViewController {
             
         }
         
-        
+        //dentro de la alerta estamos agregando un textField
         alert.addTextField { (alertTextField) in
             textField = alertTextField;
         }
